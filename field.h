@@ -16,6 +16,7 @@ private:
     double x[2];
     double y[2];
 
+
     bool empty;
 
 public:

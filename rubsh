@@ -1,0 +1,22 @@
+                   /*       for (int j = 0; j < 8; j++) {
+                               for (int i = 0; i < 8; i++) {
+       //                            if(Board.getBiale(i).find(ox, oy) == Board.getChoosen()) break;
+                                   if (Board.getField(i, j).findField(ox, oy) && Board.getField(i, j).getEmpty()) {
+                                       double X = Board.getField(i, j).getX()[0];
+                                       double Y = Board.getField(i, j).getY()[0];
+                                       *//*std::cout << Board.getField(Board.getBiale(Board.getChoosen()).getField(0),
+                                                            Board.getBiale(Board.getChoosen()).getField(1)).getEmpty()
+                                          << " ";
+                                *//*
+                                Board.getField(Board.getBiale(Board.getChoosen()).getField(0),
+                                               Board.getBiale(Board.getChoosen()).getField(1)).setEmpty(true);
+                                *//*std::cout << Board.getField(Board.getBiale(Board.getChoosen()).getField(0),
+                                                            Board.getBiale(Board.getChoosen()).getField(1)).getEmpty()
+                                          << " ";
+                                *//*
+                                Board.getBiale(Board.getChoosen()).setKords(X, Y);
+                                Board.getBiale(Board.getChoosen()).setField(i, j);
+                                Board.getField(i, j).setEmpty(false);
+                                //std::cout << Board.getField(i, j).getEmpty() << " \n";
+                                Board.setChoosen(-1);
+                                //std::cout << "dziala albo i nie \n";*/

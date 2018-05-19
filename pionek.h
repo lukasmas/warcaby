@@ -18,6 +18,7 @@ private:
     double x,y;
     int kolor;
     bool live;
+    int field[2];
 
 public:
     pionek(){
@@ -26,6 +27,8 @@ public:
         y = 0.125;
         kolor = black;
         live = true;
+        field[0] = 0;
+        field[1] = 0;
     }
 
     void setKordsF(double x1, double y1 ){
@@ -70,6 +73,21 @@ public:
     bool find(double X, double Y){
         return sqrt(pow(X - x, 2) + pow(Y - y, 2)) <= radius;
     }
+
+
+    void setField(int a, int b){
+        field[0] = a;
+        field[1] = b;
+    }
+
+    int &getField(int x){
+        return field[x];
+    }
+
+    void option(){
+
+    }
+
 
 
 };
