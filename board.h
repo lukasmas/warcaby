@@ -17,6 +17,7 @@ private:
     std::vector<pionek> biale;
     std::vector<pionek> czarne;
     int choosen;
+    int kolor;
 
 public:
     board() {
@@ -54,6 +55,7 @@ public:
 
         }
         choosen = -1;
+        kolor = white;
     }
 
 
@@ -88,65 +90,111 @@ public:
 
     void move(double ox, double oy, int x) {
 
-        std::vector<pionek> &temp = biale;
-        int direct = 1;
-
-        if(x == black) {
-            temp = czarne;
-            direct = -1;
-        }
 
         if (choosen != -1) {
-            int x = temp[choosen].getField(0);
-            int y = temp[choosen].getField(1);
 
-            if (fields[x + 1][y + 1].getEmpty() && fields[x + 1][y + 1].findField(ox, oy)) {
-                double X = *fields[x + 1][y + direct].getX();
-                double Y = *fields[x + 1][y + direct].getY();
+            int direct;
+            if (x == white) {
+                direct = 1;
 
-                fields[x][y].setEmpty(true);
-                temp[choosen].setKords(X, Y);
-                temp[choosen].setField(x + 1, y + direct);
-                fields[x + 1][y + 1].setEmpty(false);
-                choosen = -1;
+
+                int x = biale[choosen].getField(0);
+                int y = biale[choosen].getField(1);
+
+                if (fields[x + 1][y + direct].getEmpty() && fields[x + 1][y + direct].findField(ox, oy)) {
+                    double X = *fields[x + 1][y + direct].getX();
+                    double Y = *fields[x + 1][y + direct].getY();
+
+                    fields[x][y].setEmpty(true);
+                    biale[choosen].setKords(X, Y);
+                    biale[choosen].setField(x + 1, y + direct);
+                    fields[x + 1][y + direct].setEmpty(false);
+                    choosen = -1;
+                    kolor = black;
+
+                }
+                if ((fields[x - 1][y + direct].getEmpty() && fields[x - 1][y + direct].findField(ox, oy))) {
+                    double X = *fields[x - 1][y + direct].getX();
+                    double Y = *fields[x - 1][y + direct].getY();
+
+                    fields[x][y].setEmpty(true);
+                    biale[choosen].setKords(X, Y);
+                    biale[choosen].setField(x - 1, y + direct);
+                    fields[x - 1][y + direct].setEmpty(false);
+                    choosen = -1;
+                    kolor = black;
+                }
 
             }
-            if ((fields[x - 1][y + 1].getEmpty() && fields[x - 1][y + direct ].findField(ox, oy))) {
-                double X = *fields[x - 1][y + direct].getX();
-                double Y = *fields[x - 1][y + direct].getY();
 
-                fields[x][y].setEmpty(true);
-                temp[choosen].setKords(X, Y);
-                temp[choosen].setField(x - 1, y + direct);
-                fields[x - 1][y + 1].setEmpty(false);
-                choosen = -1;
+            if (x == black) {
+
+                direct = -1;
+
+                int x = czarne[choosen].getField(0);
+                int y = czarne[choosen].getField(1);
+
+                if (fields[x + 1][y + direct].getEmpty() && fields[x + 1][y + direct].findField(ox, oy)) {
+                    double X = *fields[x + 1][y + direct].getX();
+                    double Y = *fields[x + 1][y + direct].getY();
+
+                    fields[x][y].setEmpty(true);
+                    czarne[choosen].setKords(X, Y);
+                    czarne[choosen].setField(x + 1, y + direct);
+                    fields[x + 1][y + direct].setEmpty(false);
+                    choosen = -1;
+                    kolor = white;
+
+                }
+                if ((fields[x - 1][y + direct].getEmpty() && fields[x - 1][y + direct].findField(ox, oy))) {
+                    double X = *fields[x - 1][y + direct].getX();
+                    double Y = *fields[x - 1][y + direct].getY();
+
+                    fields[x][y].setEmpty(true);
+                    czarne[choosen].setKords(X, Y);
+                    czarne[choosen].setField(x - 1, y + direct);
+                    fields[x - 1][y + direct].setEmpty(false);
+                    choosen = -1;
+                    kolor = white;
+
+                }
+
+
 
             }
 
 
         }
-        delete temp;
+
 
     }
 
     int choose(double ox, double oy, bool x) {
 
         for (int i = 0; i < biale.size(); ++i) {
-            if (biale[i].find(ox, oy)) {
+            if (biale[i].find(ox, oy) && kolor == white) {
                 if (x) choosen = i;
                 else choosen = -1;
+                // kolor = white;
 
 
             }
-            if (czarne[i].find(ox, oy)) {
+            if (czarne[i].find(ox, oy) && kolor == black) {
                 if (x) choosen = i;
                 else choosen = -1;
+                //kolor = black;
 
 
             }
 
         }
     }
+
+    int getKolor() {
+        return kolor;
+    }
+
+    bool kill();
 
 
 };

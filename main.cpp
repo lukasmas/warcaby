@@ -43,7 +43,11 @@ void Display() {
     for (int k = 0; k < Board.getSize(); ++k) {
 
 
-        glColor3f(0.2, 0.2, 0.2);
+        if (Board.getChoosen() == k && Board.getKolor() == black) {
+            glColor3f(0.3, 0.3, 0.3);
+        } else {
+            glColor3f(0.2, 0.2, 0.2);
+        }
 
 
         // RYSOWANIE PIONKA CZARNEGO
@@ -73,10 +77,10 @@ void Display() {
 
     for (int k = 0; k < Board.getSize(); ++k) {
 
-        if (Board.getChoosen() != k) {
-            glColor3f(0.9, 0.9, 0.9);
-        } else  {
+        if (Board.getChoosen() == k && Board.getKolor() == white) {
             glColor3f(0.8, 0.8, 0.8);
+        } else {
+            glColor3f(0.9, 0.9, 0.9);
         }
 
 
@@ -106,7 +110,8 @@ void Display() {
     }
 
     if (Board.getChoosen() != -1) {
-        drawOption(white);
+
+        drawOption(Board.getKolor());
     }
 
 
@@ -161,8 +166,9 @@ void mouse(int btn, int state, int x, int y) {
                 } else {
 
                     Board.choose(ox, oy, false);
+                    //std::cout<<Board.getKolor()<<std::endl;
 
-                    Board.move(ox, oy, white);
+                    Board.move(ox, oy, Board.getKolor());
 
 
                 }
@@ -228,25 +234,21 @@ int main(int argc, char *argv[]) {
 void drawOption(int opt) {
     glColor3f(0.5, 0.5, 0.5);
 
-    //Change the 6 to 12 to increase the steps (number of drawn points) for a smoother circle
-    //Note that anything above 24 will have little affect on the circles appearance
-    //Play with the numbers till you find the result you are looking for
-    //Value 1.5 - Draws Triangle
-    //Value 2 - Draws Square
-    //Value 3 - Draws Hexagon
-    //Value 4 - Draws Octagon
-    //Value 5 - Draws Decagon
-    //Notice the correlation between the value and the number of sides
-    //The number of sides is always twice the value given this range
+
+    int direct = 1;
+    pionek temp = Board.getBiale(Board.getChoosen());
+    if (opt == black) {
+        temp = Board.getCzarne(Board.getChoosen());
+        direct = -1;
+    }
 
 
-
-    int temp1 = Board.getBiale(Board.getChoosen()).getField(0);
-    int temp2 = Board.getBiale(Board.getChoosen()).getField(1);
+    int temp1 = temp.getField(0);
+    int temp2 = temp.getField(1);
 
     if (temp1 > 0 && temp1 < 7) {
 
-        if (Board.getField(temp1 + 1, temp2 + 1).getEmpty()) {
+        if (Board.getField(temp1 + 1, temp2 + direct).getEmpty()) {
 
             glBegin(GL_POLYGON);
 
@@ -254,8 +256,8 @@ void drawOption(int opt) {
             for (double i = 0; i < 2 * M_PI; i += M_PI / 12) //<-- Change this Value
             {
 
-                double x2 = *Board.getField(temp1 + 1, temp2 + 1).getX() + 0.125 + cos(i) * 0.05;
-                double y2 = *Board.getField(temp1 + 1, temp2 + 1).getY() + 0.125 + sin(i) * 0.05;
+                double x2 = *Board.getField(temp1 + 1, temp2 + direct).getX() + 0.125 + cos(i) * 0.05;
+                double y2 = *Board.getField(temp1 + 1, temp2 + direct).getY() + 0.125 + sin(i) * 0.05;
                 //std::cout<<Board.getBiale(Board.getChoosen()).getField(0) <<" "<<Board.getBiale(Board.getChoosen()).getField(1)<< "\n";
 
                 glVertex2d(x2, y2);
@@ -263,13 +265,13 @@ void drawOption(int opt) {
             }
             glEnd();
         }
-        if (Board.getField(temp1 - 1, temp2 + 1).getEmpty()) {
+        if (Board.getField(temp1 - 1, temp2 + direct).getEmpty()) {
             glBegin(GL_POLYGON);
             for (double i = 0; i < 2 * M_PI; i += M_PI / 12) //<-- Change this Value
             {
 
-                double x2 = *Board.getField(temp1 - 1, temp2 + 1).getX() + 0.125 + cos(i) * 0.05;
-                double y2 = *Board.getField(temp1 - 1, temp2 + 1).getY() + 0.125 + sin(i) * 0.05;
+                double x2 = *Board.getField(temp1 - 1, temp2 + direct).getX() + 0.125 + cos(i) * 0.05;
+                double y2 = *Board.getField(temp1 - 1, temp2 + direct).getY() + 0.125 + sin(i) * 0.05;
                 //std::cout<<Board.getBiale(Board.getChoosen()).getField(0) <<" "<<Board.getBiale(Board.getChoosen()).getField(1)<< "\n";
 
                 glVertex2d(x2, y2);
@@ -278,13 +280,13 @@ void drawOption(int opt) {
             glEnd();
         }
     } else if (temp1 == 7) {
-        if (Board.getField(temp1 - 1, temp2 + 1).getEmpty()) {
+        if (Board.getField(temp1 - 1, temp2 + direct).getEmpty()) {
             glBegin(GL_POLYGON);
             for (double i = 0; i < 2 * M_PI; i += M_PI / 12) //<-- Change this Value
             {
 
-                double x2 = *Board.getField(temp1 - 1, temp2 + 1).getX() + 0.125 + cos(i) * 0.05;
-                double y2 = *Board.getField(temp1 - 1, temp2 + 1).getY() + 0.125 + sin(i) * 0.05;
+                double x2 = *Board.getField(temp1 - 1, temp2 + direct).getX() + 0.125 + cos(i) * 0.05;
+                double y2 = *Board.getField(temp1 - 1, temp2 + direct).getY() + 0.125 + sin(i) * 0.05;
                 //std::cout<<Board.getBiale(Board.getChoosen()).getField(0) <<" "<<Board.getBiale(Board.getChoosen()).getField(1)<< "\n";
 
                 glVertex2d(x2, y2);
@@ -298,8 +300,8 @@ void drawOption(int opt) {
             for (double i = 0; i < 2 * M_PI; i += M_PI / 12) //<-- Change this Value
             {
 
-                double x2 = *Board.getField(temp1 + 1, temp2 + 1).getX() + 0.125 + cos(i) * 0.05;
-                double y2 = *Board.getField(temp1 + 1, temp2 + 1).getY() + 0.125 + sin(i) * 0.05;
+                double x2 = *Board.getField(temp1 + 1, temp2 + direct).getX() + 0.125 + cos(i) * 0.05;
+                double y2 = *Board.getField(temp1 + 1, temp2 + direct).getY() + 0.125 + sin(i) * 0.05;
                 //std::cout<<Board.getBiale(Board.getChoosen()).getField(0) <<" "<<Board.getBiale(Board.getChoosen()).getField(1)<< "\n";
 
                 glVertex2d(x2, y2);
@@ -308,6 +310,7 @@ void drawOption(int opt) {
             glEnd();
         }
     }
+    //delete &temp;
 
 
 }
