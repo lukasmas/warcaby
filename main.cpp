@@ -33,80 +33,61 @@ void Display() {
 
             // koniec definicji prymitywu
             glEnd();
-            /*           printf("[%f][%f] | [%f][%f] -> [%d] \n ", Board.getField(j, i).getX()[0], Board.getField(j, i).getY()[0],
-                              Board.getField(j, i).getX()[1], Board.getField(j, i).getY()[1], Board.getFieldKolor(j, i));
-           */
 
         }
     }
 
     for (int k = 0; k < Board.getSize(); ++k) {
 
+        if (Board.getCzarne(k).getLive()) {
+            if (Board.getChoosen() == k && Board.getKolor() == black) {
+                glColor3f(0.3, 0.3, 0.3);
+            } else {
+                glColor3f(0.2, 0.2, 0.2);
+            }
 
-        if (Board.getChoosen() == k && Board.getKolor() == black) {
-            glColor3f(0.3, 0.3, 0.3);
-        } else {
-            glColor3f(0.2, 0.2, 0.2);
-        }
 
+            // RYSOWANIE PIONKA CZARNEGO
+            glBegin(GL_POLYGON);
 
-        // RYSOWANIE PIONKA CZARNEGO
-        glBegin(GL_POLYGON);
-        //Change the 6 to 12 to increase the steps (number of drawn points) for a smoother circle
-        //Note that anything above 24 will have little affect on the circles appearance
-        //Play with the numbers till you find the result you are looking for
-        //Value 1.5 - Draws Triangle
-        //Value 2 - Draws Square
-        //Value 3 - Draws Hexagon
-        //Value 4 - Draws Octagon
-        //Value 5 - Draws Decagon
-        //Notice the correlation between the value and the number of sides
-        //The number of sides is always twice the value given this range
-        for (double i = 0; i < 2 * M_PI; i += M_PI / 12) //<-- Change this Value
-        {
-            double x2 = Board.getCzarne(k).getX() + cos(i) * Board.getCzarne(k).getRadius();
-            double y2 = Board.getCzarne(k).getY() + sin(i) * Board.getCzarne(k).getRadius();
+            for (double i = 0; i < 2 * M_PI; i += M_PI / 12) {
+                double x2 = Board.getCzarne(k).getX() + cos(i) * Board.getCzarne(k).getRadius();
+                double y2 = Board.getCzarne(k).getY() + sin(i) * Board.getCzarne(k).getRadius();
 
-            glVertex2d(x2, y2);
+                glVertex2d(x2, y2);
+
+            }
+            glEnd();
 
         }
-        glEnd();
-        //printf("[%f][%f] -> [%d] \n ", Board.getPionek(k).getX(), Board.getPionek(k).getY(), Board.getPionek(k).getKolor());
-
     }
 
     for (int k = 0; k < Board.getSize(); ++k) {
 
-        if (Board.getChoosen() == k && Board.getKolor() == white) {
-            glColor3f(0.8, 0.8, 0.8);
-        } else {
-            glColor3f(0.9, 0.9, 0.9);
-        }
+        if (Board.getCzarne(k).getLive()) {
 
 
-        // RYSOWANIE PIONKA BIAŁEGO
-        glBegin(GL_POLYGON);
-        //Change the 6 to 12 to increase the steps (number of drawn points) for a smoother circle
-        //Note that anything above 24 will have little affect on the circles appearance
-        //Play with the numbers till you find the result you are looking for
-        //Value 1.5 - Draws Triangle
-        //Value 2 - Draws Square
-        //Value 3 - Draws Hexagon
-        //Value 4 - Draws Octagon
-        //Value 5 - Draws Decagon
-        //Notice the correlation between the value and the number of sides
-        //The number of sides is always twice the value given this range
-        for (double i = 0; i < 2 * M_PI; i += M_PI / 12) //<-- Change this Value
-        {
-            double x2 = Board.getBiale(k).getX() + cos(i) * Board.getBiale(k).getRadius();
-            double y2 = Board.getBiale(k).getY() + sin(i) * Board.getBiale(k).getRadius();
+            if (Board.getChoosen() == k && Board.getKolor() == white) {
+                glColor3f(0.8, 0.8, 0.8);
+            } else {
+                glColor3f(0.9, 0.9, 0.9);
+            }
 
-            glVertex2d(x2, y2);
+
+            // RYSOWANIE PIONKA BIAŁEGO
+            glBegin(GL_POLYGON);
+
+            for (double i = 0; i < 2 * M_PI; i += M_PI / 12) {
+                double x2 = Board.getBiale(k).getX() + cos(i) * Board.getBiale(k).getRadius();
+                double y2 = Board.getBiale(k).getY() + sin(i) * Board.getBiale(k).getRadius();
+
+                glVertex2d(x2, y2);
+
+            }
+            glEnd();
+
 
         }
-        glEnd();
-        //printf("[%f][%f] -> [%d] \n ", Board.getPionek(k).getX(), Board.getPionek(k).getY(), Board.getPionek(k).getKolor());
-
     }
 
     if (Board.getChoosen() != -1) {
@@ -310,7 +291,6 @@ void drawOption(int opt) {
             glEnd();
         }
     }
-    //delete &temp;
 
 
 }

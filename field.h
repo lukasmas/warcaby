@@ -63,6 +63,8 @@ public:
         return x;
     }
 
+    // zwraca true jesli kliknieto w pole
+
     bool findField(double X, double Y) {
         X = X + 1;
         Y = Y + 1;

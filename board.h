@@ -16,8 +16,8 @@ private:
     field fields[8][8];
     std::vector<pionek> biale;
     std::vector<pionek> czarne;
-    int choosen;
-    int kolor;
+    int choosen; // wybrany pionek
+    int kolor; // Kto ma ruch
 
 public:
     board() {
@@ -88,13 +88,22 @@ public:
         return choosen;
     }
 
-    void move(double ox, double oy, int x) {
+    bool isMove(int x, int y){
+        int dir;
+        if (kolor == white) dir = 1;
+        else dir = -1;
+
+        return (fields[x + 1][y + dir].getEmpty() || fields[x - 1][y + dir].getEmpty());
+
+    }
+
+    void move(double ox, double oy, int k) {
 
 
         if (choosen != -1) {
 
             int direct;
-            if (x == white) {
+            if (k == white) {
                 direct = 1;
 
 
@@ -127,7 +136,7 @@ public:
 
             }
 
-            if (x == black) {
+            if (k == black) {
 
                 direct = -1;
 
@@ -171,30 +180,125 @@ public:
 
     int choose(double ox, double oy, bool x) {
 
-        for (int i = 0; i < biale.size(); ++i) {
-            if (biale[i].find(ox, oy) && kolor == white) {
-                if (x) choosen = i;
-                else choosen = -1;
-                // kolor = white;
 
+
+            for (int i = 0; i < biale.size(); ++i) {
+                if (biale[i].find(ox, oy) && kolor == white) {
+                    if (x && isMove(biale[i].getField(0), biale[i].getField(1) )) choosen = i;
+                    else choosen = -1;
+                    // kolor = white;
+
+
+                }
+                if (czarne[i].find(ox, oy) && kolor == black) {
+                    if (x && isMove(czarne[i].getField(0), czarne[i].getField(1))) choosen = i;
+                    else choosen = -1;
+                    //kolor = black;
+
+
+                }
 
             }
-            if (czarne[i].find(ox, oy) && kolor == black) {
-                if (x) choosen = i;
-                else choosen = -1;
-                //kolor = black;
 
-
-            }
-
-        }
     }
 
     int getKolor() {
         return kolor;
     }
 
-    bool kill();
+    void kill(double ox, double oy, int k){
+        if (choosen != -1) {
+
+            int direct;
+            if (k == white) {
+                direct = 1;
+
+
+                int x = biale[choosen].getField(0);
+                int y = biale[choosen].getField(1);
+
+                if (!(fields[x + 1][y + direct].getEmpty()) && fields[x + 1][y + direct].findField(ox, oy))  {
+                    if(fields[x + 2][y + 2*direct].getEmpty() && fields[x + 1][y + direct].getKolor() == black){
+
+                        double X = *fields[x + 2][y + 2*direct].getX();
+                        double Y = *fields[x + 2][y + 2*direct].getY();
+
+                        fields[x][y].setEmpty(true);
+                        biale[choosen].setKords(X, Y);
+                        biale[choosen].setField(x + 2, y + 2*direct);
+                        fields[x + 2][y + 2*direct].setEmpty(false);
+
+                        for (int i = 0; i < czarne.size() ; ++i) {
+                            if(czarne[i].getField(0) == x+1 && czarne[i].getField(1) == y+direct){
+                                czarne[i].dead();
+                                fields[x+1][y+direct].setEmpty(true);
+
+                            }
+
+                        }
+
+                        choosen = -1;
+                        kolor = black;
+
+
+                    }
+
+
+                }
+                if ((fields[x - 1][y + direct].getEmpty() && fields[x - 1][y + direct].findField(ox, oy))) {
+                    double X = *fields[x - 1][y + direct].getX();
+                    double Y = *fields[x - 1][y + direct].getY();
+
+                    fields[x][y].setEmpty(true);
+                    biale[choosen].setKords(X, Y);
+                    biale[choosen].setField(x - 1, y + direct);
+                    fields[x - 1][y + direct].setEmpty(false);
+                    choosen = -1;
+                    kolor = black;
+                }
+
+            }
+
+            if (k == black) {
+
+                direct = -1;
+
+                int x = czarne[choosen].getField(0);
+                int y = czarne[choosen].getField(1);
+
+                if (fields[x + 1][y + direct].getEmpty() && fields[x + 1][y + direct].findField(ox, oy)) {
+                    double X = *fields[x + 1][y + direct].getX();
+                    double Y = *fields[x + 1][y + direct].getY();
+
+                    fields[x][y].setEmpty(true);
+                    czarne[choosen].setKords(X, Y);
+                    czarne[choosen].setField(x + 1, y + direct);
+                    fields[x + 1][y + direct].setEmpty(false);
+                    choosen = -1;
+                    kolor = white;
+
+                }
+                if ((fields[x - 1][y + direct].getEmpty() && fields[x - 1][y + direct].findField(ox, oy))) {
+                    double X = *fields[x - 1][y + direct].getX();
+                    double Y = *fields[x - 1][y + direct].getY();
+
+                    fields[x][y].setEmpty(true);
+                    czarne[choosen].setKords(X, Y);
+                    czarne[choosen].setField(x - 1, y + direct);
+                    fields[x - 1][y + direct].setEmpty(false);
+                    choosen = -1;
+                    kolor = white;
+
+                }
+
+
+
+            }
+
+
+        }
+
+    };
 
 
 };

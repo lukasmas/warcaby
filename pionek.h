@@ -84,8 +84,14 @@ public:
         return field[x];
     }
 
-    void option(){
+    void dead(){
+        live = false;
 
+    }
+
+    bool getLive()
+    {
+        return live;
     }
 
 
