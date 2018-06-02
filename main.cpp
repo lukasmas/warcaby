@@ -4,45 +4,25 @@
 #include <cmath>
 #include <iostream>
 #include "board.h"
+#include <chrono>
+#include <ctime>
+#include <random>
+#include <zconf.h>
 
 
 board Board;
+#define gleb  6
 
 
-void opponent() {
-}
+void opponent();
 
-double minmax(board temp, int k, int g) {
-    double M = 0;
-    if (k == black) {
-        if (isKillL(S.getField(0), S.getField(1), black, B, W)) {
-            killL(S, black, B, W);
-            M++;
-            M = minmax(B, W, white, g) + M + 0.1;
-            return M;
-        }
-        if (isKillR(S.getField(0), S.getField(1), black, B, W)) {
-            killR(S, black, B, W);
-            M++;
-            M = minmax(B, W, white, g) + M + 0.2;
-            return M;
-        }
-        if (isMoveL(S.getField(0), S.getField(1), black)) {
-            moveL(S, black, B, W);
-            M = minmax(B, W, white, g) + M + 0.3;
-        }
-        if (isMoveR(S.getField(0), S.getField(1), black)) {
-            moveR(S, black, B, W);
-            M = minmax(B, W, white, g) + M + 0.4;
-        }
+double minmax(board temp, pionek S, int k, int g);
 
-    }
-    return M;
-
-
-}
+int minmax(board temp, int k, int g);
 
 void drawOption(int opt);
+
+void drawWin(int who);
 
 
 void Display() {
@@ -129,6 +109,8 @@ void Display() {
         drawOption(Board.getKolor());
     }
 
+    if(Board.win()!= 0) drawWin(Board.win());
+
 
     // skierowanie poleceń do wykonania
     glFlush();
@@ -176,26 +158,34 @@ void mouse(int btn, int state, int x, int y) {
 
                 if (Board.getChoosen() == -1) {
                     Board.choose(ox, oy, true);
+                    Display();
 
 
                 } else {
 
 
-
                     Board.choose(ox, oy, false);
                     //std::cout<<Board.getKolor()<<std::endl;
+                    Display();
 
+                    if (Board.getChoosen() != -1) {
 
+                        Board.move(ox, oy, Board.getKolor());
+                        Board.kill(ox, oy, Board.getKolor());
+                        Display();
 
-                    Board.move(ox, oy, Board.getKolor());
+                        usleep(500000);
 
-                    Board.kill(ox, oy, Board.getKolor());
+                        opponent();
+                        Display();
+                    }
 
 
                 }
 
 
-                Display();
+
+
             }
 
             break;
@@ -334,3 +324,209 @@ void drawOption(int opt) {
 
 
 }
+
+void drawWin(int who){
+    if (who == 1){
+        glColor3f(0, 0, 0);
+        glRectd(-1,-1, 1 ,1);
+        glEnd();
+
+
+
+    }
+    if (who == 2){
+        glColor3f(1, 1, 1);
+        glRectd(-1,-1, 1 ,1);
+        glEnd();
+
+
+
+    }
+}
+
+
+double minmax(board temp, pionek S, int k, int g, int i) {
+    double M = 0;
+    if (k == black) {
+
+        if (temp.isKillL(S.getField(0), S.getField(1), black)) {
+            temp.killL(i, black);
+            M++;
+            M = minmax(temp, white, g) + M + 0.1;
+            return M;
+        }
+        if (temp.isKillR(S.getField(0), S.getField(1), black)) {
+            temp.killR(i, black);
+            M++;
+            M = minmax(temp, white, g) + M + 0.2;
+            return M;
+        }
+        if (temp.isMoveL(S.getField(0), S.getField(1), black)) {
+            temp.moveL(i, black);
+            M = minmax(temp, white, g) + M + 0.3;
+        }
+        if (temp.isMoveR(S.getField(0), S.getField(1), black)) {
+            temp.moveR(i, black);
+            M = minmax(temp, white, g) + M + 0.4;
+        }
+
+    }
+    return M;
+}
+
+int minmax(board temp, int k, int g) {
+    int M = 0;
+    if (g < gleb) {
+        if (k == black) {
+            for (int i = 0; i < temp.getSize(); ++i) {
+                if (temp.isKillL(temp.getCzarne(i).getField(0), temp.getCzarne(i).getField(1), black)) {
+                    temp.killL(i, black);
+                    M++;
+                    M = minmax(temp, white, g) + M;
+                    return M;
+                }
+                if (temp.isKillR(temp.getCzarne(i).getField(0), temp.getCzarne(i).getField(1), black)) {
+                    temp.killR(i, black);
+                    M++;
+                    M = minmax(temp, white, g) + M;
+                    return M;
+                }
+                if (temp.isMoveL(temp.getCzarne(i).getField(0), temp.getCzarne(i).getField(1), black)) {
+                    temp.moveL(i, black);
+                    M = minmax(temp, white, g) + M;
+                }
+                if (temp.isMoveR(temp.getCzarne(i).getField(0), temp.getCzarne(i).getField(1), black)) {
+                    temp.moveR(i, black);
+                    M = minmax(temp, white, g) + M;
+                }
+            }
+            return M;
+
+        }
+
+
+        if (k == white) {
+
+            for (int i = 0; i < temp.getSize(); ++i) {
+                if (temp.isKillL(temp.getBiale(i).getField(0), temp.getBiale(i).getField(1), white)) {
+                    temp.killL(i, white);
+                    M++;
+                    M = minmax(temp, black, ++g) + M;
+                    return M;
+                }
+                if (temp.isKillR(temp.getBiale(i).getField(0), temp.getBiale(i).getField(1), white)) {
+                    temp.killR(i, white);
+                    M++;
+                    M = minmax(temp, black, ++g) + M;
+                    return M;
+                }
+                if (temp.isMoveL(temp.getBiale(i).getField(0), temp.getBiale(i).getField(1), white)) {
+                    temp.moveL(i, white);
+                    M = minmax(temp, black, ++g) + M;
+                }
+                if (temp.isMoveR(temp.getBiale(i).getField(0), temp.getBiale(i).getField(1), white)) {
+                    temp.moveR(i, white);
+                    M = minmax(temp, black, ++g) + M;
+                }
+            }
+            return M;
+
+        }
+
+    }
+    return 0;
+
+
+}
+
+
+void opponent() {
+
+    std::vector<double> M;
+    //std::vector<pionek> T;
+    std::vector<int> I;
+    int indeks = 0;
+    double max = 0;
+
+    for (int i = 0; i < Board.getSize(); i++) {
+        pionek AI = Board.getCzarne(i);
+        /*   std::cout << Board.isMoveL(AI.getField(0), AI.getField(1), black)
+                   << isMoveR(AI[.getField(0), AI.getField(1), black)
+                   << isKillL(AI[i].getField(0), AI.getField(1), black, AI, symW)
+                   << isKillR(AI[i].getField(0), AI[i].getField(1), black, AI, symW) << " \n";*/
+
+        //std::cout << AI[i].getLive()<<" \n";
+        if (AI.getLive()) {
+            if (Board.isMoveL(AI.getField(0), AI.getField(1), black) ||
+                Board.isMoveR(AI.getField(0), AI.getField(1), black) ||
+                Board.isKillL(AI.getField(0), AI.getField(1), black) ||
+                Board.isKillR(AI.getField(0), AI.getField(1), black)) {
+                M.push_back(minmax(Board, AI, black, 0, i));
+                //T.push_back(AI);
+                I.push_back(i);
+
+            }
+
+        }
+
+    }
+    //double max = 0;
+    for (int j = 0; j < M.size(); ++j) {
+        bool t = true;
+        //std::cout << j << ". " << M[j] << " \n";
+        if (M[j] > max) {
+
+            max = M[j];
+            indeks = j;
+        }
+
+
+
+    }
+
+
+    max = max - floor(max);
+    //std::cout << max << "\n \n";
+
+    if (fabs(max - 0.1) < 0.00001) {
+        Board.killL(I[indeks], black);
+        //std::cout<<" 0 \n";
+    }
+    if (fabs(max - 0.2) < 0.00001) {
+        Board.killR(I[indeks], black);
+         //std::cout<<" 1 \n";
+    }
+    if (fabs(max - 0.3) < 0.00001) {
+        Board.moveL(I[indeks], black);
+         //std::cout<<" 2 \n";
+    }
+    if (fabs(max - 0.4) < 0.00001) {
+        Board.moveR(I[indeks], black);
+        //std::cout<<" 3 \n";
+    }
+    if (fabs(max - 0.7) < 0.00001) {
+        long long int seed = std::chrono::steady_clock::now().time_since_epoch().count();
+        std::mt19937 eng(seed);
+        std::uniform_int_distribution<int> idis(0, 1);
+        if (idis(eng) == 0)
+            Board.moveR(I[indeks], black);
+        else
+            Board.moveL(I[indeks], black);
+        //std::cout<<" 4 \n";
+
+    }
+
+    for (int k = 0; k < Board.getSize(); ++k) {
+
+        //std::cout<<Board.getCzarne(k).getField(0)<<","<<Board.getCzarne(k).getField(1)<<"\n";
+
+        //std::cout<<"\n";
+
+    }
+
+    Board.setChoosen(-1);
+    Board.setKolor(white);
+
+
+}
+

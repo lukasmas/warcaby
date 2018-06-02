@@ -80,6 +80,8 @@ public:
     }
 
     void delete1() {
+        delete &biale.back();
+        delete &czarne.back();
         biale.pop_back();
         czarne.pop_back();
     }
@@ -90,6 +92,10 @@ public:
 
     int getChoosen() {
         return choosen;
+    }
+
+    void setKolor(int k) {
+        kolor = k;
     }
 
     bool isMoveL(int x, int y) {
@@ -202,14 +208,14 @@ public:
     }
 
 
-    bool isKillL(int x, int y, int k, std::vector<pionek> &B, std::vector<pionek> &W) {
+    bool isKillL(int x, int y, int k) {
         int dir;
         if (k == white) {
             dir = 1;
             if (x >= 2 && x <= 7 && y >= 0 && y <= 5) {
                 bool j, d = false, t;
                 j = !(fields[x - 1][y + dir].getEmpty());
-                for (auto &i : B) {
+                for (auto &i : czarne) {
                     if (i.getField(0) == x - 1 && i.getField(1) == y + dir && i.getKolor() == black) d = true;
                 }
                 t = fields[x - 2][y + 2 * dir].getEmpty();
@@ -221,7 +227,7 @@ public:
             if (x >= 2 && x <= 7 && y >= 2 && y <= 7) {
                 bool j, d = false, t;
                 j = !(fields[x - 1][y + dir].getEmpty());
-                for (auto &i : W) {
+                for (auto &i : biale) {
                     if (i.getField(0) == x - 1 && i.getField(1) == y + dir && i.getKolor() == white) d = true;
                 }
                 t = fields[x - 2][y + 2 * dir].getEmpty();
@@ -264,14 +270,14 @@ public:
         return false;
     }
 
-    bool isKillR(int x, int y, int k, std::vector<pionek> &B, std::vector<pionek> &W) {
+    bool isKillR(int x, int y, int k) {
         int dir;
         if (k == white) {
             dir = 1;
             if (x >= 0 && x <= 5 && y >= 0 && y <= 5) {
                 bool j, d = false, t;
                 j = !(fields[x + 1][y + dir].getEmpty());
-                for (auto &i : B) {
+                for (auto &i : czarne) {
                     if (i.getField(0) == x + 1 && i.getField(1) == y + dir && i.getKolor() == black) d = true;
                 }
                 t = fields[x + 2][y + 2 * dir].getEmpty();
@@ -283,7 +289,7 @@ public:
             if (x >= 0 && x <= 5 && y >= 2 && y <= 7) {
                 bool j, d = false, t;
                 j = !(fields[x - 1][y + dir].getEmpty());
-                for (auto &i : W) {
+                for (auto &i : biale) {
                     if (i.getField(0) == x + 1 && i.getField(1) == y + dir && i.getKolor() == white) d = true;
                 }
                 t = fields[x + 2][y + 2 * dir].getEmpty();
@@ -371,7 +377,7 @@ public:
 
 
         }
-        opponent(black);
+        //opponent(black);
 
 
     }
@@ -420,23 +426,23 @@ public:
         return kolor;
     }
 
-    void killL(pionek &T, int k, std::vector<pionek> &B, std::vector<pionek> &W) {
+    void killL(int indeks, int k) {
         int direct;
         if (k == black) {
             direct = -1;
 
-            int x = T.getField(0);
-            int y = T.getField(1);
+            int x = czarne[indeks].getField(0);
+            int y = czarne[indeks].getField(1);
 
             double X = *fields[x - 2][y + (2 * direct)].getX();
             double Y = *fields[x - 2][y + (2 * direct)].getY();
 
             fields[x][y].setEmpty(true);
-            //T.setKords(X, Y);
-            T.setField(x - 2, y + (2 * direct));
+            czarne[indeks].setKords(X, Y);
+            czarne[indeks].setField(x - 2, y + (2 * direct));
             fields[x - 2][y + (2 * direct)].setEmpty(false);
 
-            for (auto &i : W) {
+            for (auto &i : biale) {
                 if (i.getField(0) == x - 1 && i.getField(1) == y + direct && i.getLive()) {
                     i.dead();
                     fields[x - 1][y + direct].setEmpty(true);
@@ -450,18 +456,18 @@ public:
 
             direct = 1;
 
-            int x = T.getField(0);
-            int y = T.getField(1);
+            int x = biale[indeks].getField(0);
+            int y = biale[indeks].getField(1);
 
             double X = *fields[x - 2][y + (2 * direct)].getX();
             double Y = *fields[x - 2][y + (2 * direct)].getY();
 
             fields[x][y].setEmpty(true);
-            //T.setKords(X, Y);
-            T.setField(x - 2, y + (2 * direct));
+            biale[indeks].setKords(X, Y);
+            biale[indeks].setField(x - 2, y + (2 * direct));
             fields[x - 2][y + (2 * direct)].setEmpty(false);
 
-            for (auto &i : B) {
+            for (auto &i : czarne) {
                 if (i.getField(0) == x - 1 && i.getField(1) == y + direct && i.getLive()) {
                     i.dead();
                     fields[x - 1][y + direct].setEmpty(true);
@@ -474,23 +480,23 @@ public:
 
     }
 
-    void killR(pionek &T, int k, std::vector<pionek> &B, std::vector<pionek> &W) {
+    void killR(int indeks, int k) {
         int direct;
         if (k == black) {
             direct = -1;
 
-            int x = T.getField(0);
-            int y = T.getField(1);
+            int x = czarne[indeks].getField(0);
+            int y = czarne[indeks].getField(1);
 
             double X = *fields[x + 2][y + (2 * direct)].getX();
             double Y = *fields[x + 2][y + (2 * direct)].getY();
 
             fields[x][y].setEmpty(true);
-            //T.setKords(X, Y);
-            T.setField(x + 2, y + (2 * direct));
+            czarne[indeks].setKords(X, Y);
+            czarne[indeks].setField(x + 2, y + (2 * direct));
             fields[x + 2][y + (2 * direct)].setEmpty(false);
 
-            for (auto &i : W) {
+            for (auto &i : biale) {
                 if (i.getField(0) == x + 1 && i.getField(1) == y + direct && i.getLive()) {
                     i.dead();
                     fields[x + 1][y + direct].setEmpty(true);
@@ -504,18 +510,18 @@ public:
 
             direct = 1;
 
-            int x = T.getField(0);
-            int y = T.getField(1);
+            int x = biale[indeks].getField(0);
+            int y = biale[indeks].getField(1);
 
             double X = *fields[x + 2][y + (2 * direct)].getX();
             double Y = *fields[x + 2][y + (2 * direct)].getY();
 
             fields[x][y].setEmpty(true);
-            //T.setKords(X, Y);
-            T.setField(x + 2, y + (2 * direct));
+            biale[indeks].setKords(X, Y);
+            biale[indeks].setField(x + 2, y + (2 * direct));
             fields[x + 2][y + (2 * direct)].setEmpty(false);
 
-            for (auto &i : B) {
+            for (auto &i : czarne) {
                 if (i.getField(0) == x + 1 && i.getField(1) == y + direct && i.getLive()) {
                     i.dead();
                     fields[x + 1][y + direct].setEmpty(true);
@@ -527,68 +533,101 @@ public:
         }
     }
 
-    void moveL(pionek &T, int k, std::vector<pionek> &B, std::vector<pionek> &W) {
+    void moveL(int indeks, int k) {
         int direct;
         if (k == black) {
             direct = -1;
 
-            int x = T.getField(0);
-            int y = T.getField(1);
+            int x = czarne[indeks].getField(0);
+            int y = czarne[indeks].getField(1);
 
 
             double X = *fields[x - 1][y + direct].getX();
             double Y = *fields[x - 1][y + direct].getY();
 
             fields[x][y].setEmpty(true);
-            //czarne[choosen].setKords(X, Y);
-            T.setField(x - 1, y + direct);
+            czarne[indeks].setKords(X, Y);
+            czarne[indeks].setField(x - 1, y + direct);
             fields[x - 1][y + direct].setEmpty(false);
 
         } else if (k == white) {
             direct = 1;
-            int x = T.getField(0);
-            int y = T.getField(1);
+            int x = biale[indeks].getField(0);
+            int y = biale[indeks].getField(1);
 
 
             double X = *fields[x - 1][y + direct].getX();
             double Y = *fields[x - 1][y + direct].getY();
             fields[x][y].setEmpty(true);
-            //czarne[choosen].setKords(X, Y);
-            T.setField(x - 1, y + direct);
+            biale[indeks].setKords(X, Y);
+            biale[indeks].setField(x - 1, y + direct);
             fields[x - 1][y + direct].setEmpty(false);
 
         }
     }
 
-    void moveR(pionek &T, int k, std::vector<pionek> &B, std::vector<pionek> &W) {
+    /*void moveR(pionek &T, int k) {
+         int direct;
+         if (k == black) {
+             direct = -1;
+
+             int x = T.getField(0);
+             int y = T.getField(1);
+
+
+             double X = *fields[x + 1][y + direct].getX();
+             double Y = *fields[x + 1][y + direct].getY();
+
+             fields[x][y].setEmpty(true);
+             T.setKords(X, Y);
+             T.setField(x + 1, y + direct);
+             fields[x + 1][y + direct].setEmpty(false);
+
+         } else if (k == white) {
+             direct = 1;
+             int x = T.getField(0);
+             int y = T.getField(1);
+
+
+             double X = *fields[x + 1][y + direct].getX();
+             double Y = *fields[x + 1][y + direct].getY();
+
+             fields[x][y].setEmpty(true);
+             T.setKords(X, Y);
+             T.setField(x + 1, y + direct);
+             fields[x + 1][y + direct].setEmpty(false);
+
+         }
+     }*/
+
+    void moveR(int indeks, int k) {
         int direct;
         if (k == black) {
             direct = -1;
-
-            int x = T.getField(0);
-            int y = T.getField(1);
-
+            int x = czarne[indeks].getField(0);
+            int y = czarne[indeks].getField(1);
 
             double X = *fields[x + 1][y + direct].getX();
             double Y = *fields[x + 1][y + direct].getY();
 
             fields[x][y].setEmpty(true);
-            //czarne[choosen].setKords(X, Y);
-            T.setField(x + 1, y + direct);
+            czarne[indeks].setKords(X, Y);
+            czarne[indeks].setField(x + 1, y + direct);
             fields[x + 1][y + direct].setEmpty(false);
 
+
         } else if (k == white) {
             direct = 1;
-            int x = T.getField(0);
-            int y = T.getField(1);
+            int x = biale[indeks].getField(0);
+            int y = biale[indeks].getField(1);
 
 
             double X = *fields[x + 1][y + direct].getX();
             double Y = *fields[x + 1][y + direct].getY();
 
             fields[x][y].setEmpty(true);
-            //czarne[choosen].setKords(X, Y);
-            T.setField(x + 1, y + direct);
+            biale[indeks].setKords(X, Y);
+            biale[indeks].setField(x + 1, y + direct);
             fields[x + 1][y + direct].setEmpty(false);
 
         }
@@ -755,6 +794,40 @@ public:
 
 
         }
+
+    }
+
+    int win() {
+        int W = 0;
+        int B = 0;
+        for (int i = 0; i < biale.size(); ++i) {
+            if (biale[i].getLive()) {
+                if (isMoveL(biale[i].getField(0), biale[i].getField(1), white) ||
+                    isMoveR(biale[i].getField(0), biale[i].getField(1), white) ||
+                    isKillL(biale[i].getField(0), biale[i].getField(1), white) ||
+                    isKillR(biale[i].getField(0), biale[i].getField(1), white)) {
+                    W++;
+
+                }
+            }
+        }
+
+        for (int i = 0; i < czarne.size(); ++i) {
+            if (czarne[i].getLive()) {
+                if (isMoveL(czarne[i].getField(0), czarne[i].getField(1), black) ||
+                    isMoveR(czarne[i].getField(0), czarne[i].getField(1), black) ||
+                    isKillL(czarne[i].getField(0), czarne[i].getField(1), black) ||
+                    isKillR(czarne[i].getField(0), czarne[i].getField(1), black)) {
+                    B++;
+
+                }
+            }
+        }
+
+        if(W == 0) return 1;
+        if(B == 0) return 2;
+        return 0;
+
 
     }
 
