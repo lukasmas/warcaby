@@ -8,6 +8,40 @@
 
 board Board;
 
+
+void opponent() {
+}
+
+double minmax(board temp, int k, int g) {
+    double M = 0;
+    if (k == black) {
+        if (isKillL(S.getField(0), S.getField(1), black, B, W)) {
+            killL(S, black, B, W);
+            M++;
+            M = minmax(B, W, white, g) + M + 0.1;
+            return M;
+        }
+        if (isKillR(S.getField(0), S.getField(1), black, B, W)) {
+            killR(S, black, B, W);
+            M++;
+            M = minmax(B, W, white, g) + M + 0.2;
+            return M;
+        }
+        if (isMoveL(S.getField(0), S.getField(1), black)) {
+            moveL(S, black, B, W);
+            M = minmax(B, W, white, g) + M + 0.3;
+        }
+        if (isMoveR(S.getField(0), S.getField(1), black)) {
+            moveR(S, black, B, W);
+            M = minmax(B, W, white, g) + M + 0.4;
+        }
+
+    }
+    return M;
+
+
+}
+
 void drawOption(int opt);
 
 
@@ -64,7 +98,7 @@ void Display() {
 
     for (int k = 0; k < Board.getSize(); ++k) {
 
-        if (Board.getCzarne(k).getLive()) {
+        if (Board.getBiale(k).getLive()) {
 
 
             if (Board.getChoosen() == k && Board.getKolor() == white) {
@@ -146,10 +180,16 @@ void mouse(int btn, int state, int x, int y) {
 
                 } else {
 
+
+
                     Board.choose(ox, oy, false);
                     //std::cout<<Board.getKolor()<<std::endl;
 
+
+
                     Board.move(ox, oy, Board.getKolor());
+
+                    Board.kill(ox, oy, Board.getKolor());
 
 
                 }
