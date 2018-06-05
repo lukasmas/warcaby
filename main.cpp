@@ -109,7 +109,10 @@ void Display() {
         drawOption(Board.getKolor());
     }
 
-    if(Board.win()!= 0) drawWin(Board.win());
+    if(Board.win()!= 0) {
+        usleep(500000);
+        drawWin(Board.win());
+    }
 
 
     // skierowanie poleceń do wykonania

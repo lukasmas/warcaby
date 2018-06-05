@@ -799,33 +799,45 @@ public:
 
     int win() {
         int W = 0;
+        int Wl = 0;
+        int Wb = 0;
         int B = 0;
-        for (int i = 0; i < biale.size(); ++i) {
-            if (biale[i].getLive()) {
-                if (isMoveL(biale[i].getField(0), biale[i].getField(1), white) ||
-                    isMoveR(biale[i].getField(0), biale[i].getField(1), white) ||
-                    isKillL(biale[i].getField(0), biale[i].getField(1), white) ||
-                    isKillR(biale[i].getField(0), biale[i].getField(1), white)) {
+        for (auto &i : biale) {
+            if (i.getLive()) {
+                Wl++;
+                if (isMoveL(i.getField(0), i.getField(1), white) ||
+                    isMoveR(i.getField(0), i.getField(1), white) ||
+                    isKillL(i.getField(0), i.getField(1), white) ||
+                    isKillR(i.getField(0), i.getField(1), white)) {
                     W++;
 
                 }
             }
         }
 
-        for (int i = 0; i < czarne.size(); ++i) {
-            if (czarne[i].getLive()) {
-                if (isMoveL(czarne[i].getField(0), czarne[i].getField(1), black) ||
-                    isMoveR(czarne[i].getField(0), czarne[i].getField(1), black) ||
-                    isKillL(czarne[i].getField(0), czarne[i].getField(1), black) ||
-                    isKillR(czarne[i].getField(0), czarne[i].getField(1), black)) {
+        for (auto &i : czarne) {
+            if (i.getLive()) {
+                Wb++;
+                if (isMoveL(i.getField(0), i.getField(1), black) ||
+                    isMoveR(i.getField(0), i.getField(1), black) ||
+                    isKillL(i.getField(0), i.getField(1), black) ||
+                    isKillR(i.getField(0), i.getField(1), black)) {
                     B++;
 
                 }
             }
         }
 
-        if(W == 0) return 1;
+
+
+        if(B == 0 && W == 0) {
+            if(Wl > Wb) return 1;
+            else return  2;
+        }
+
         if(B == 0) return 2;
+        if(W == 0) return 1;
+
         return 0;
 
 
